@@ -14,7 +14,7 @@ app.get("/",(req,res)=>{
 
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.jp082z4.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -52,6 +52,33 @@ async function run() {
       res.json(result);
     });
     
+    app.get("/product/brand_name/:id", async (req, res) => {
+          const id = req.params.id;
+          const query = {_id: new ObjectId(id)}
+          const result = await productCollection.findOne(query)
+          res.send(result);
+
+    });
+
+    app.put("/product/brand_name/:id", async (req, res) =>{
+        const id = req.params.id;
+        const filter = {_id: new ObjectId(id)}
+        const options = { upsert: true };
+        const data = req.body;
+        const UpdateResult = {
+          $set:{
+            name : data.name, 
+            brand_name : data.brand_name, 
+            price : data.price, 
+            type : data.type, 
+            rating : data.rating, 
+            img : data.img
+          }
+        }
+        const result = await productCollection.updateOne(filter,UpdateResult,options)
+        res.send(result);
+    });
+
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
