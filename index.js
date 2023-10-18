@@ -45,9 +45,9 @@ async function run() {
           res.send(result);          
     });
 
-    app.get("/product/:brand", async (req, res) => {
-      const brand = req.params.brand.toLowerCase();
-      const query = { brand: { $regex: new RegExp(brand, "i") } };
+    app.get("/product/:brand_name", async (req, res) => {
+      const brand = req.params.brand_name;
+      const query = { brand_name: brand};
       const result = await productCollection.find(query).toArray();
       res.json(result);
     });
